@@ -1,0 +1,50 @@
+
+@import "tailwindcss";
+
+@theme {
+  --color-ivory: #FAF7F1;
+  --color-offwhite: #FFFCF8;
+  --color-gold: #C9A46A;
+  --color-chocolate: #4A2E1F;
+  --color-rose: #E9A09A;
+  --color-sage: #8FA580;
+  --color-sand: #F2E9DD;
+--color-taupe: #806D61;
+}
+
+body {
+  margin: 0;
+  background-color: #d7d4ce;
+  color: #4A2E1F;
+}
+
+
+/* Hero carousel pagination */
+.hero-pagination .swiper-pagination-bullet {
+  width: 9px;
+  height: 9px;
+  background-color: #4A2E1F;
+  opacity: 0.35;
+  transition: all 0.3s ease;
+}
+
+.hero-pagination .swiper-pagination-bullet-active {
+  width: 26px;
+  border-radius: 999px;
+  background-color: #C9A46A;
+  opacity: 1;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
