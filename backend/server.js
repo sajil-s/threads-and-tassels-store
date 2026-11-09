@@ -117,18 +117,27 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 // Start server
+
 const startServer = async () => {
+  // Start listening immediately for Hostinger.
+  const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+
   try {
+    // Connect MongoDB after the HTTP server starts.
     await connectDb();
 
+    // Start scheduled tasks only after DB connection.
     startReservationCleanup();
 
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+    console.log("Backend initialized successfully");
   } catch (error) {
-    console.error("Server startup failed:", error.message);
-    process.exit(1);
+    console.error("Backend initialization failed:", error.message);
+
+    server.close(() => {
+      process.exit(1);
+    });
   }
 };
 
