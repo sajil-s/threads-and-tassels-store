@@ -2,7 +2,7 @@
 import { FaWhatsapp } from "react-icons/fa6";
 
 function WhatsAppButton() {
-  const phoneNumber = "917356854339";
+  const phoneNumber = "7338662124";
 
   const message =
     "Hello Threads & Tassels! I would like to know more about your salwar materials.";

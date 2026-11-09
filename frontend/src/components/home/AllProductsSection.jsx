@@ -43,7 +43,7 @@ function AllProductsSection() {
   if (loading) {
     return (
       <section className="flex min-h-[200px] items-center justify-center bg-offwhite">
-        <Flower2 size={28} className="animate-spin text-gold" />
+        {/* <Flower2 size={28} className="animate-spin text-gold" /> */}
       </section>
     );
   }

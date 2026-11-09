@@ -1,16 +1,19 @@
+
+
+
 {
-  "name": "backend",
+  "name": "threads-and-tassels-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "main": "server.js",
   "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.11.0",

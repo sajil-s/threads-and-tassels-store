@@ -12,11 +12,11 @@ import {
 
 const router = express.Router();
 
+
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).populate(
-      "cart.product"
-    );
+    const user = await User.findById(req.user.userId)
+      .populate("cart.product");
 
     if (!user) {
       return res.status(404).json({
@@ -25,30 +25,47 @@ router.get("/", authMiddleware, async (req, res) => {
       });
     }
 
+    // Remove cart items whose products no longer exist.
+    const validItems = user.cart.filter(
+      (item) => item.product != null
+    );
+
+    const removedInvalidItems =
+      user.cart.length - validItems.length;
+
+    if (removedInvalidItems > 0) {
+      // Save only valid product references.
+      user.cart = validItems.map((item) => ({
+        product: item.product._id,
+        quantity: item.quantity,
+      }));
+
+      await user.save();
+    }
+
     const offer = await getCurrentOffer();
 
-const items = user.cart
-  .filter((item) => item.product)
-  .map((item) => {
-    const price = getEffectivePrice(item.product, offer);
+    const items = validItems.map((item) => {
+      const price = getEffectivePrice(item.product, offer);
 
-    return {
-      product: item.product,
-      quantity: item.quantity,
-      price,
-      subtotal: price * item.quantity,
-    };
-  });
+      return {
+        product: item.product,
+        quantity: item.quantity,
+        price,
+        subtotal: price * item.quantity,
+      };
+    });
 
-const total = items.reduce(
-  (sum, item) => sum + item.subtotal,
-  0
-);
+    const total = items.reduce(
+      (sum, item) => sum + item.subtotal,
+      0
+    );
 
     return res.status(200).json({
       success: true,
       items,
       total,
+      removedInvalidItems,
     });
   } catch (error) {
     console.error("Fetch cart failed:", error.message);
@@ -59,6 +76,121 @@ const total = items.reduce(
     });
   }
 });
+
+
+
+// router.get("/", authMiddleware, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user.userId)
+//       .populate("cart.product");
+
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
+
+//     // Find cart items whose products no longer exist.
+//     const invalidItems = user.cart.filter(
+//       (item) => !item.product
+//     );
+
+//     if (invalidItems.length > 0) {
+//       console.log(
+//         `Removing ${invalidItems.length} invalid cart item(s)`
+//       );
+
+//       // Keep only items linked to existing products.
+//       user.cart = user.cart.filter(
+//         (item) => item.product !== null
+//       );
+
+//       await user.save();
+//     }
+
+//     const offer = await getCurrentOffer();
+
+//     const items = user.cart.map((item) => {
+//       const price = getEffectivePrice(item.product, offer);
+
+//       return {
+//         product: item.product,
+//         quantity: item.quantity,
+//         price,
+//         subtotal: price * item.quantity,
+//       };
+//     });
+
+//     const total = items.reduce(
+//       (sum, item) => sum + item.subtotal,
+//       0
+//     );
+
+//     return res.status(200).json({
+//       success: true,
+//       items,
+//       total,
+//       removedInvalidItems: invalidItems.length,
+//     });
+//   } catch (error) {
+//     console.error("Fetch cart failed:", error.message);
+
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch cart",
+//     });
+//   }
+// });
+
+
+// router.get("/", authMiddleware, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user.userId).populate(
+//       "cart.product"
+//     );
+
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
+
+//     const offer = await getCurrentOffer();
+
+// const items = user.cart
+//   .filter((item) => item.product)
+//   .map((item) => {
+//     const price = getEffectivePrice(item.product, offer);
+
+//     return {
+//       product: item.product,
+//       quantity: item.quantity,
+//       price,
+//       subtotal: price * item.quantity,
+//     };
+//   });
+
+// const total = items.reduce(
+//   (sum, item) => sum + item.subtotal,
+//   0
+// );
+
+//     return res.status(200).json({
+//       success: true,
+//       items,
+//       total,
+//     });
+//   } catch (error) {
+//     console.error("Fetch cart failed:", error.message);
+
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch cart",
+//     });
+//   }
+// });
 
 //////////////////////////////////////////
 

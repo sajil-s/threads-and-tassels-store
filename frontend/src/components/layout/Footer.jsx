@@ -1,5 +1,6 @@
 import { Mail, Phone, ArrowUpRight } from "lucide-react";
 import { FaInstagram } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 const paymentMethods = [
   {
@@ -33,7 +34,7 @@ const quickLinks = [
 
 function Footer() {
   return (
-    <footer className="border-t border-gold/20 bg-[#F8F5EF] text-chocolate">
+    <footer id="footer"  className="border-t border-gold/20 bg-[#e8e5df] text-chocolate">
 
       {/* Main footer */}
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-9 px-5 py-12 sm:grid-cols-2 sm:px-8 lg:grid-cols-4 lg:gap-12 lg:py-14">
@@ -141,9 +142,15 @@ function Footer() {
       <div className="border-t border-gold/15">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-4 py-7 text-center">
 
-          <p className="text-[11px] text-taupe">
+          {/* <p className="text-[11px] text-taupe">
             © 2026 ID-1956294551. All rights reserved.
-          </p>
+          </p> */}
+          <div className="border-t border-[#EAE2D8] py-5 text-center">
+  <p className="text-xs text-[#A7A7A5]">
+    © {new Date().getFullYear()} Threads & Tassels.
+    All rights reserved.
+  </p>
+</div>
 
           {/* Payment icons */}
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -164,12 +171,12 @@ function Footer() {
 
           {/* Policies */}
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
-            <a
-              href="/terms"
-              className="text-[10px] uppercase tracking-wider text-taupe transition-colors hover:text-gold"
-            >
-              Terms & Conditions
-            </a>
+   <Link
+  to="/terms-and-conditions"
+  className="text-[10px] uppercase tracking-wider text-taupe transition-colors hover:text-gold"
+>
+  Terms & Conditions
+</Link>
 
             <a
               href="/privacy-policy"
@@ -177,6 +184,12 @@ function Footer() {
             >
               Privacy Policy
             </a>
+            <Link
+  to="/refund-policy"
+  className="text-[10px] uppercase tracking-wider text-taupe transition-colors hover:text-gold"
+>
+  Refund & Exchange Policy
+</Link>
 
             <a
               href="/shipping-policy"

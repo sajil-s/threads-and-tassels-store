@@ -40,6 +40,31 @@ function ProductDetails() {
   const [cartMessage, setCartMessage] = useState("");
   const [cartError, setCartError] = useState("");
 
+
+  ////////
+  const paymentMethods = [
+  {
+    name: "Google Pay",
+    image: "https://api.mysto.shop/storage/bundled-apps/trust-badges/icons/gpay.png",
+  },
+  {
+    name: "UPI",
+    image: "https://api.mysto.shop/storage/bundled-apps/trust-badges/icons/upi.png",
+  },
+  {
+    name: "PhonePe",
+    image: "https://api.mysto.shop/storage/bundled-apps/trust-badges/icons/phonepe.png",
+  },
+  {
+    name: "Visa",
+    image: "https://api.mysto.shop/storage/bundled-apps/trust-badges/icons/visa.png",
+  },
+  {
+    name: "Mastercard",
+    image: "https://api.mysto.shop/storage/bundled-apps/trust-badges/icons/mastercard.png",
+  },
+];
+
   const touchStartX = useRef(null);
 
   useEffect(() => {
@@ -463,7 +488,7 @@ function ProductDetails() {
                   Secure payments supported
                 </p>
 
-                <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-chocolate">
+                {/* <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-chocolate">
                   <span>UPI</span>
                   <span className="text-[#C9A46A]">•</span>
                   <span>Visa</span>
@@ -471,7 +496,23 @@ function ProductDetails() {
                   <span>Mastercard</span>
                   <span className="text-[#C9A46A]">•</span>
                   <span>RuPay</span>
-                </div>
+                </div> */}
+                {/* Payment icons */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {paymentMethods.map((method) => (
+              <div
+                key={method.name}
+                className="flex h-8 w-[54px] items-center justify-center rounded-md border border-gold/10 bg-white px-2"
+              >
+                <img
+                  src={method.image}
+                  alt={method.name}
+                  loading="lazy"
+                  className="max-h-5 max-w-full object-contain"
+                />
+              </div>
+            ))}
+          </div>
               </div>
 
               {/* BUY BUTTONS */}

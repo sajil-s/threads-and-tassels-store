@@ -162,7 +162,16 @@ if (!isIndia) {
         });
       }
 
-      const product = await Product.findById(item.product);
+      // const product = await Product.findById(item.product);
+      console.log("===== CHECKOUT DEBUG =====");
+console.log("Checkout type:", checkoutType);
+console.log("Product ID:", String(item.product));
+console.log("Quantity:", item.quantity);
+
+const product = await Product.findById(item.product);
+
+console.log("Product found:", product ? product.title : "NOT FOUND");
+console.log("==========================");
 
       if (!product) {
         return res.status(404).json({
@@ -449,7 +458,7 @@ router.post("/verify-payment", authMiddleware, async (req, res) => {
       {
         $set: {
           paymentStatus: "paid",
-          orderStatus: "confirmed",
+          orderStatus: "pending",
           inventoryStatus: "committed",
           razorpayPaymentId: razorpay_payment_id,
         },

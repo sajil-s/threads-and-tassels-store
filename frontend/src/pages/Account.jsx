@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
-
+import FlowerLoader from "../components/common/FlowerLoader"
 import Reveal from "../components/common/Reveal";
 
 const statusStyles = {
@@ -193,8 +193,24 @@ function Account() {
                   disabled={loggingOut}
                   className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#EAE2D8] px-4 py-3 text-sm font-medium text-chocolate transition-colors hover:border-gold hover:bg-gold/10 disabled:opacity-50"
                 >
-                  <LogOut size={17} />
-                  {loggingOut ? "Logging Out..." : "Log Out"}
+                  {/* <LogOut size={17} />
+                  {loggingOut ? "Logging Out..." : "Log Out"} */}
+                {loggingOut ? (
+  <>
+    <FlowerLoader
+      variant="inline"
+      size={20}
+      label="Logging out"
+    />
+    <span>Logging out...</span>
+  </>
+) : (
+  <>
+    <LogOut size={17} />
+    <span>Log Out</span>
+  </>
+)}
+                
                 </button>
               </div>
              

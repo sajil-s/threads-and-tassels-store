@@ -5,6 +5,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { getProducts } from "../services/productApi";
 import Reveal from "../components/common/Reveal";
+// import FlowerLoader from "../../components/common/FlowerLoader";
+import FlowerLoader from "../components/common/FlowerLoader"
 
 const PRODUCTS_PER_PAGE = 12;
 
@@ -151,11 +153,20 @@ const category = searchParams.get("category")?.trim() || "";
         </Reveal>
 
         {/* Loading */}
-        {loading && (
+        {/* {loading && (
           <p className="py-16 text-center text-sm text-taupe">
             Loading products...
           </p>
-        )}
+        )} */}
+        {loading && (
+  <div className="py-12">
+    <FlowerLoader
+      variant="section"
+      label="Loading products"
+    />
+  </div>
+)}
+
 
         {/* Error */}
         {!loading && error && (
