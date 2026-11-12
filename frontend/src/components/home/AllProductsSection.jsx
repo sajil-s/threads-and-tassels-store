@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, ArrowUpRight, Flower2 } from "lucide-react";
 import { getProducts } from "../../services/productApi";
+import { Link } from "react-router-dom";
 
 function AllProductsSection() {
   const [products, setProducts] = useState([]);
@@ -152,7 +153,7 @@ function AllProductsSection() {
         </div>
 
         {/* View All Products Button */}
-        <div className="mt-12 flex justify-center sm:mt-16">
+        {/* <div className="mt-12 flex justify-center sm:mt-16">
           <a
             href="/products"
             className="group inline-flex items-center gap-3 rounded-full border border-gold px-7 py-3.5 text-xs font-medium uppercase tracking-[0.15em] text-chocolate transition-all duration-300 hover:border-chocolate hover:bg-chocolate hover:text-white"
@@ -165,7 +166,22 @@ function AllProductsSection() {
               className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
             />
           </a>
-        </div>
+        </div> */}
+        <div className="mt-12 flex justify-center sm:mt-16">
+  <Link
+    to="/products"
+    className="group inline-flex items-center gap-3 rounded-full border border-gold px-7 py-3.5 text-xs font-medium uppercase tracking-[0.15em] text-chocolate transition-all duration-300 hover:border-chocolate hover:bg-chocolate hover:text-white"
+  >
+    Explore All Products
+
+    <ArrowUpRight
+      size={17}
+      strokeWidth={1.5}
+      className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+    />
+  </Link>
+</div>
+        
 
       </div>
     </section>
