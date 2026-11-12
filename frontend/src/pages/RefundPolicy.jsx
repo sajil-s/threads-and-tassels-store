@@ -75,7 +75,7 @@ const sections = [
   {
     title: "Contact information",
     paragraphs: [
-      "For questions about exchanges, product issues, or payments, contact Threads & Tassels at example@email.com.",
+      "For questions about exchanges, product issues, or payments, contact Threads & Tassels at threadsandtassels@gmail.com.",
       "Business location: Threads & Tassels, Aluva, Kerala, India. This is an online boutique; please contact us before attempting to return or deliver a parcel in person."
     ]
   }
@@ -137,7 +137,7 @@ export default function RefundPolicy() {
             <p className="mt-3 text-sm leading-7 text-chocolate/75">Contact our team with your order number and details of the issue. For damage claims, please reach out as soon as possible.</p>
             <div className="mt-5 flex flex-wrap items-center gap-5">
               <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-sage px-5 py-3 text-xs font-semibold text-white transition-opacity hover:opacity-90">Contact Us <ArrowUpRight size={15} /></Link>
-              <a href="mailto:example@email.com" className="inline-flex items-center gap-2 text-sm text-chocolate hover:text-gold"><Mail size={16} /> example@email.com</a>
+              <a href="threadsandtassels@gmail.com" className="inline-flex items-center gap-2 text-sm text-chocolate hover:text-gold"><Mail size={16} /> threadsandtassels@gmail.com</a>
             </div>
           </div>
         </div>

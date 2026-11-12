@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight, FileText, Mail, MapPin, ShieldCheck } from "lucide-react";
 
 const LAST_UPDATED = "5 November 2026";
-const SUPPORT_EMAIL = "example@email.com"; // REPLACE with the real support email before publishing.
+const SUPPORT_EMAIL = "threadsandtassels@gmail.com"; // REPLACE with the real support email before publishing.
 
 const sections = [
   {

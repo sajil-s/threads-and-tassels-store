@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { ArrowRight, ArrowUpRight, Flower2 } from "lucide-react";
 import { getTrendingProducts } from "../../services/productApi";
 import { getCurrentOffer } from "../../services/offerApi";
+import { Link } from "react-router-dom";
+
 
 function TrendingProducts() {
   const [products, setProducts] = useState([]);
@@ -109,18 +111,20 @@ function TrendingProducts() {
           </div>
 
           {/* Desktop View All */}
-          <a
-            href="/products"
+          
+          <Link
+           to="/products"
             className="group hidden items-center gap-2 text-xs font-medium uppercase tracking-[0.15em] text-chocolate transition-colors duration-300 hover:text-gold sm:inline-flex"
           >
-            Explore All
+           Explore All
 
             <ArrowUpRight
               size={17}
               strokeWidth={1.5}
               className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
             />
-          </a>
+          </Link>
+         
         </div>
 
         {/* Product Grid */}
@@ -137,8 +141,8 @@ function TrendingProducts() {
 
                 {/* Product Image */}
                 
-<a
-  href={`/products/${product._id}`}
+<Link
+  to={`/products/${product._id}`}
   className="relative block aspect-[3/4] overflow-hidden rounded-lg bg-sand lg:aspect-[4/3]"
 >
   <img
@@ -165,7 +169,7 @@ function TrendingProducts() {
                       />
                     </span>
                   </div>
-                </a>
+                </Link>
 
                 {/* Product Information */}
                <div className="flex flex-1 flex-col pt-3">
@@ -177,12 +181,12 @@ function TrendingProducts() {
 
                   {/* Title */}
                   <h3 className="mt-1 min-h-[40px] font-serif text-sm font-medium leading-5 text-chocolate sm:text-base sm:leading-6">
-                    <a
-                      href={`/products/${product._id}`}
+                    <Link
+                      to={`/products/${product._id}`}
                       className="transition-colors duration-300 hover:text-gold"
                     >
                       {product.title}
-                    </a>
+                    </Link>
                   </h3>
 
                   {/* Prices */}
@@ -201,8 +205,8 @@ function TrendingProducts() {
 
                   {/* Minimal Shop Now Link */}
                  <div className="mt-auto pt-3">
-                    <a
-                      href={`/products/${product._id}`}
+                    <Link
+                      to={`/products/${product._id}`}
                       className="inline-flex items-center gap-2 border-b border-gold pb-1.5 text-[10px] font-medium uppercase tracking-[0.12em] text-chocolate transition-all duration-300 hover:gap-3 hover:text-gold sm:text-xs"
                     >
                       Shop Now
@@ -211,7 +215,7 @@ function TrendingProducts() {
                         size={15}
                         strokeWidth={1.5}
                       />
-                    </a>
+                    </Link>
                   </div>
 
                 </div>
@@ -222,8 +226,8 @@ function TrendingProducts() {
 
         {/* Mobile Explore All */}
         <div className="mt-10 flex justify-center sm:hidden">
-          <a
-            href="/trending"
+          <Link
+            to="/trending"
             className="inline-flex items-center gap-2 border-b border-gold pb-2 text-xs font-medium uppercase tracking-wider text-chocolate"
           >
             Explore All Products
@@ -232,7 +236,7 @@ function TrendingProducts() {
               size={16}
               strokeWidth={1.5}
             />
-          </a>
+          </Link>
         </div>
 
       </div>

@@ -59,7 +59,7 @@ function Footer() {
           </p>
 
           <a
-            href="https://instagram.com/"
+            href="https://www.instagram.com/threads.tassels.by.san?psln=MWY3N2l1cGtnMG9pbg=="
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
@@ -70,23 +70,24 @@ function Footer() {
         </div>
 
         {/* Quick links */}
+       
         <div>
-          <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-taupe">
-            Quick Links
-          </h3>
+  <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-taupe">
+    Quick Links
+  </h3>
 
-          <nav className="flex flex-col items-start gap-3">
-            {quickLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-sm text-chocolate/85 transition-colors duration-300 hover:text-gold"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-        </div>
+  <nav className="flex flex-col items-start gap-3">
+    {quickLinks.map((link) => (
+      <Link
+        key={link.label}
+        to={link.href}
+        className="text-sm text-chocolate/85 transition-colors duration-300 hover:text-gold"
+      >
+        {link.label}
+      </Link>
+    ))}
+  </nav>
+</div>
 
         {/* Contact */}
         <div>
@@ -104,19 +105,19 @@ function Footer() {
               </span>
 
               <span className="break-all">
-                contact@example.com
+                threadsandtassels07@gmail.com
               </span>
             </a>
 
             <a
-              href="tel:+9197356854339"
+              href="tel:+91 7338662124"
               className="flex items-center gap-3 text-sm text-chocolate/85 transition-colors hover:text-gold"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-offwhite text-sage">
                 <Phone size={16} strokeWidth={1.6} />
               </span>
 
-              <span>+91 73568 54339</span>
+              <span>+91 7338662124</span>
             </a>
           </div>
         </div>

@@ -3,7 +3,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-
+import{Link} from "react-router-dom"
+ 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -119,12 +120,20 @@ autoplay={
                     {slide.description}
                   </p>
 
-                  <a
+                  <Link
+            to="/products"
+            className="mt-8 inline-block rounded-full bg-chocolate px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-gold"
+            >
+              {slide.buttonText}
+
+            </Link>
+
+                  {/* <a
                     href="#"
                     className="mt-8 inline-block rounded-full bg-chocolate px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-gold"
                   >
                     {slide.buttonText}
-                  </a>
+                  </a> */}
 
                 </div>
               </div>

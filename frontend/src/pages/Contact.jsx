@@ -11,9 +11,9 @@ import {
 const contact = {
   businessName: "Threads & Tassels",
   address: "Aluva, Kerala, India",
-  email: "support@example.com",
-  phone: "+919876543210",
-  displayPhone: "+91 98765 43210",
+  email: "threadsandtasswls07@gmail.com",
+  phone: "+91 7338662124",
+  displayPhone: "+91 7338662124",
 };
 
 export default function Contact() {

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ShieldCheck, Mail, MapPin, ArrowUpRight } from "lucide-react";
 
 const UPDATED = "5 November 2026";
-const SUPPORT_EMAIL = "example@email.com"; // Replace before launch.
+const SUPPORT_EMAIL = "threadsandtassels@gmail.com"; // Replace before launch.
 
 const sections = [
   {

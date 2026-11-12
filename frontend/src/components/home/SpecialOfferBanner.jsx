@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { getCurrentOffer } from "../../services/offerApi";
+import { Link } from "react-router-dom";
 
 function SpecialOfferBanner() {
   const [offer, setOffer] = useState(null);
@@ -71,13 +72,19 @@ function SpecialOfferBanner() {
               On our beautiful salwar materials
             </p>
 
-            <a
+            {/* <a
               href="/products"
               className="mt-6 inline-flex items-center gap-3 rounded-full bg-chocolate px-6 py-3 text-xs font-medium uppercase tracking-wider text-white transition-colors hover:bg-gold"
             >
               Explore Now
               <ArrowRight size={16} />
-            </a>
+            </a> */}
+          <Link
+          to="/products"
+          className="mt-6 inline-flex items-center gap-3 rounded-full bg-chocolate px-6 py-3 text-xs font-medium uppercase tracking-wider text-white transition-colors hover:bg-gold"
+          >
+          Explore Now
+              <ArrowRight size={16} /></Link>
           </div>
         </div>
       </div>
