@@ -10,7 +10,7 @@ function Reveal({ children, delay = 0, className = "" }) {
       initial={
         reducedMotion
           ? false
-          : { opacity: 0, y: 70, scale: 0.96 }
+          : { opacity: 0.6, y: 70, scale: 0.96 }
       }
       whileInView={{
         opacity: 1,
