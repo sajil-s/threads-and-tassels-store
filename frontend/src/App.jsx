@@ -36,8 +36,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import ShippingPolicy from "./pages/ShippingPolicy";
 import AboutUs from "./pages/AboutUs";
-
-
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const { loading: authLoading } = useAuth();
@@ -64,32 +64,31 @@ function App() {
       {/* <IntroAnimation show={showIntro} /> */}
 
       {authLoading ? (
-        <FlowerLoader
-          variant="page"
-          showBrand
-          label="Loading"
-        />
+        <FlowerLoader variant="page" showBrand label="Loading" />
       ) : (
         <Routes>
           <Route element={<MainLayout />}>
             <Route element={<GuestRoute />}>
               <Route path="/login" element={<Login />} />
+
               <Route path="/register" element={<Register />} />
             </Route>
+
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/trending" element={<Trending />} />
             <Route path="/products/:id" element={<ProductDetails />} />
-             <Route path="/contact" element={<Contact />} />
-              <Route path="/terms-and-conditions" element={<Terms />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/refund-policy" element={<RefundPolicy />} />
-             <Route path="/shipping-policy" element={<ShippingPolicy />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/terms-and-conditions" element={<Terms />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
             <Route path="/about" element={<AboutUs />} />
 
-              
             <Route element={<ProtectedRoute />}>
               <Route path="/account" element={<Account />} />
               <Route path="/account/orders" element={<MyOrders />} />
@@ -131,5 +130,3 @@ function App() {
 }
 
 export default App;
-
-

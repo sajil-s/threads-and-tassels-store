@@ -6,6 +6,13 @@ import authMiddleware  from "../middleware/authMiddleware.js";
 import adminMiddleware from "../middleware/adminMiddleware.js";
 import mongoose from "mongoose";
 import Order from "../models/Order.js";
+import crypto from "node:crypto";
+import { Resend } from "resend";
+import {
+  loginLimiter,
+  forgotPasswordLimiter,
+  resetPasswordLimiter,
+} from "../middleware/rateLimiters.js";
 
 
 
@@ -118,7 +125,7 @@ if (!phoneRegex.test(phone.trim())) {
 //loginroutes
 
 
-router.post("/login", async (req, res) => {
+router.post("/login",loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -148,11 +155,20 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    // const token = jwt.sign(
+    //   { userId: user._id.toString(), role: user.role },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "30d" }
+    // );
     const token = jwt.sign(
-      { userId: user._id.toString(), role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "30d" }
-    );
+  {
+    userId: user._id.toString(),
+    role: user.role,
+    tokenVersion: user.tokenVersion ?? 0,
+  },
+  process.env.JWT_SECRET,
+  { expiresIn: "30d" }
+);
 
     res.cookie("token", token, {
   httpOnly: true,
@@ -228,6 +244,252 @@ router.post("/logout", (req, res) => {
     message: "Logged out successfully",
   });
 });
+////////forget password
+
+
+const RESET_LINK_MINUTES = 5;
+
+router.post("/forgot-password",forgotPasswordLimiter, async (req, res) => {
+  const genericMessage =
+    "If an account exists with this email, a password reset link will be sent shortly.";
+
+  try {
+    const { email } = req.body ?? {};
+
+    if (typeof email !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (
+      normalizedEmail.length > 254 ||
+      !emailRegex.test(normalizedEmail)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address",
+      });
+    }
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message: genericMessage,
+      });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    const expiresAt = new Date(
+      Date.now() + RESET_LINK_MINUTES * 60 * 1000
+    );
+
+    const frontendUrl = process.env.FRONTEND_URL;
+
+    if (!frontendUrl || !process.env.RESEND_API_KEY) {
+      console.error("Password reset email configuration is missing");
+
+      return res.status(503).json({
+        success: false,
+        message: "Password reset is temporarily unavailable",
+      });
+    }
+
+    const resetLink = new URL(
+      "/reset-password",
+      frontendUrl
+    );
+
+    resetLink.searchParams.set("token", resetToken);
+
+    await User.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          passwordResetToken: hashedToken,
+          passwordResetExpires: expiresAt,
+        },
+      }
+    );
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+    const { error } = await resend.emails.send({
+      from: "Threads & Tassels <noreply@threadsandtasselss.com>",
+      to: user.email,
+      subject: "Reset your Threads & Tassels password",
+      text: [
+        "We received a request to reset your password.",
+        "",
+        "Use the following link to create a new password:",
+        resetLink.toString(),
+        "",
+        "This link expires in 5 minutes and can only be used once.",
+        "",
+        "If you did not request this, you can ignore this email.",
+      ].join("\n"),
+    });
+
+    if (error) {
+      console.error("Password reset email delivery failed:", error.message);
+
+      // Clear the token only if it still matches this request.
+      await User.updateOne(
+        {
+          _id: user._id,
+          passwordResetToken: hashedToken,
+        },
+        {
+          $unset: {
+            passwordResetToken: "",
+            passwordResetExpires: "",
+          },
+        }
+      );
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: genericMessage,
+    });
+  } catch (error) {
+    console.error("Forgot password request failed:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to process the request. Please try again later.",
+    });
+  }
+});
+////////////
+
+router.post("/reset-password",resetPasswordLimiter, async (req, res) => {
+  try {
+    const { token, password, confirmPassword } = req.body ?? {};
+
+    if (
+      typeof token !== "string" ||
+      !/^[a-f0-9]{64}$/i.test(token)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired password reset link",
+      });
+    }
+
+    if (
+      typeof password !== "string" ||
+      typeof confirmPassword !== "string"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter and confirm your new password",
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match",
+      });
+    }
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password must be at least 8 characters and contain a letter and a number",
+      });
+    }
+
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: new Date() },
+    }).select("+passwordResetToken +passwordResetExpires");
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired password reset link",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Atomically consume the reset token so it cannot be reused.
+    const result = await User.updateOne(
+      {
+        _id: user._id,
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: new Date() },
+      },
+      {
+        $set: {
+          password: hashedPassword,
+        },
+        $unset: {
+          passwordResetToken: "",
+          passwordResetExpires: "",
+        },
+        $inc: {
+          tokenVersion: 1,
+        },
+      }
+    );
+
+    if (result.modifiedCount !== 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired password reset link",
+      });
+    }
+
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully. Please log in again.",
+    });
+  } catch (error) {
+    console.error("Password reset failed:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to reset password. Please try again later.",
+    });
+  }
+});
+
+
+
+
+
 //////////admin user routes
 router.get(
   "/admin/users",

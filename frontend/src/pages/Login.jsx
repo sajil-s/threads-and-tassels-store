@@ -183,7 +183,20 @@ function Login() {
               </div>
             </div>
 
-            {/* Submit */}
+            
+
+{/* Forgot Password */}
+<div className="flex justify-end">
+  <Link
+    to="/forgot-password"
+    state={{ from: redirectTo }}
+    className="text-xs font-medium text-chocolate underline decoration-gold underline-offset-4 transition-colors hover:text-gold"
+  >
+    Forgot Password?
+  </Link>
+</div>
+               {/* Submit */}
+
             <button
               type="submit"
               disabled={submitting}
