@@ -2,12 +2,51 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, UploadCloud, X, Check, ChevronDown, Loader2, ImagePlus } from "lucide-react";
 import api from "../../services/api";
+import imageCompression from "browser-image-compression";
 
 const initial = { title: "", description: "", category: "", materialType: "", color: "", actualPrice: "", discountPrice: "", stock: "", isTrending: false };
 
 function Field({ label, name, value, onChange, type = "text", placeholder = "", min, step, required = true }) {
   return <label className="block"><span className="mb-2 block text-sm font-medium text-[#4A2E1F]">{label}{required && <span className="ml-1 text-[#C77E77]">*</span>}</span><input name={name} type={type} value={value} onChange={onChange} placeholder={placeholder} min={min} step={step} required={required} className="w-full rounded-xl border border-[#EAE2D8] bg-white px-4 py-3 text-sm text-[#4A2E1F] outline-none transition focus:border-[#C9A46A] focus:ring-2 focus:ring-[#C9A46A]/15" /></label>;
 }
+/////////////////
+
+async function optimizeProductImage(file) {
+  const MAX_SIZE_BYTES = 800 * 1024;
+
+  // Preserve smaller images exactly as uploaded.
+  if (file.size <= MAX_SIZE_BYTES) {
+    return file;
+  }
+
+  const options = {
+    maxSizeMB: 0.8,
+    maxWidthOrHeight: 2000,
+    initialQuality: 0.9,
+    useWebWorker: true,
+    fileType: "image/jpeg",
+  };
+
+  try {
+    const compressed = await imageCompression(file, options);
+
+    // Never replace the original with a larger file.
+    if (compressed.size >= file.size) {
+      return file;
+    }
+
+    return new File(
+      [compressed],
+      file.name.replace(/\.[^.]+$/, "") + ".jpg",
+      { type: "image/jpeg" }
+    );
+  } catch (error) {
+    console.error("Image compression failed:", error);
+    return file;
+  }
+}
+
+/////////////////
 
 export default function AddProduct() {
   const navigate = useNavigate();
@@ -51,16 +90,56 @@ export default function AddProduct() {
     if (images.length < 1 || images.length > 3) { setError("Select between 1 and 3 product images."); return; }
     setSaving(true);
     try {
-      const urls = [];
-      for (let i = 0; i < images.length; i += 1) {
-        setUploadProgress(`Uploading image ${i + 1} of ${images.length}...`);
-        const data = new FormData();
-        data.append("image", images[i].file);
-        const response = await api.post("/upload", data);
-        const url = response.data?.image?.url;
-        if (!url) throw new Error("Image upload succeeded without a URL.");
-        urls.push(url);
-      }
+      // const urls = [];
+      // for (let i = 0; i < images.length; i += 1) {
+      //   setUploadProgress(`Uploading image ${i + 1} of ${images.length}...`);
+      //   const data = new FormData();
+      //   data.append("image", images[i].file);
+      //   const response = await api.post("/upload", data,{
+      //     timeout:60000,
+      //   });
+      //   const url = response.data?.image?.url;
+      //   if (!url) throw new Error("Image upload succeeded without a URL.");
+      //   urls.push(url);
+      // }
+
+const urls = [];
+
+for (let i = 0; i < images.length; i += 1) {
+  setUploadProgress(
+    `Optimizing image ${i + 1} of ${images.length}...`
+  );
+
+  const originalFile = images[i].file;
+
+  // Compress only when needed.
+  const optimizedFile = await optimizeProductImage(originalFile);
+
+  console.log("Image optimization:", {
+    originalKB: Math.round(originalFile.size / 1024),
+    uploadedKB: Math.round(optimizedFile.size / 1024),
+  });
+
+  setUploadProgress(
+    `Uploading image ${i + 1} of ${images.length}...`
+  );
+
+  const data = new FormData();
+  data.append("image", optimizedFile);
+
+  const response = await api.post("/upload", data, {
+    timeout: 60000,
+  });
+
+  const url = response.data?.image?.url;
+
+  if (!url) {
+    throw new Error("Image upload succeeded without a URL.");
+  }
+
+  urls.push(url);
+}
+
       setUploadProgress("Saving product...");
       await api.post("/products", {
         title: form.title.trim(), description: form.description.trim(), category: form.category.trim(),

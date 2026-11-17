@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import { ArrowLeft, X, Check, Loader2, ImagePlus, Trash2, AlertTriangle } from "lucide-react";
 import api from "../../services/api";
+import imageCompression from "browser-image-compression";
 
 const emptyForm = { title: "", description: "", category: "", materialType: "", color: "", actualPrice: "", discountPrice: "", stock: "", isTrending: false };
 const inputStyle = "w-full rounded-xl border border-[#EAE2D8] bg-white px-4 py-3 text-sm text-[#4A2E1F] outline-none transition focus:border-[#C9A46A] focus:ring-2 focus:ring-[#C9A46A]/15";
@@ -97,18 +98,62 @@ export default function EditProduct() {
     if (images.length < 1 || images.length > 3) { setError("Keep between 1 and 3 product images."); return; }
     setSaving(true);
     try {
-      const urls = [];
-      for (let i = 0; i < images.length; i += 1) {
-        const item = images[i];
-        if (item.existing) { urls.push(item.url); continue; }
-        setProgress(`Uploading image ${i + 1} of ${images.length}...`);
-        const data = new FormData();
-        data.append("image", item.file);
-        const response = await api.post("/upload", data);
-        const url = response.data?.image?.url;
-        if (!url) throw new Error("Image upload succeeded without a URL.");
-        urls.push(url);
-      }
+      // const urls = [];
+      // for (let i = 0; i < images.length; i += 1) {
+      //   const item = images[i];
+      //   if (item.existing) { urls.push(item.url); continue; }
+      //   setProgress(`Uploading image ${i + 1} of ${images.length}...`);
+      //   const data = new FormData();
+      //   data.append("image", item.file);
+      //   const response = await api.post("/upload", data);
+      //   const url = response.data?.image?.url;
+      //   if (!url) throw new Error("Image upload succeeded without a URL.");
+      //   urls.push(url);
+      // }
+
+const urls = [];
+
+for (let i = 0; i < images.length; i += 1) {
+  const item = images[i];
+
+  // Keep existing Cloudinary images unchanged.
+  if (item.existing) {
+    urls.push(item.url);
+    continue;
+  }
+
+  setProgress(
+    `Optimizing image ${i + 1} of ${images.length}...`
+  );
+
+  const originalFile = item.file;
+  const optimizedFile = await optimizeProductImage(originalFile);
+
+  console.log("Image optimization:", {
+    originalKB: Math.round(originalFile.size / 1024),
+    uploadedKB: Math.round(optimizedFile.size / 1024),
+  });
+
+  setProgress(
+    `Uploading image ${i + 1} of ${images.length}...`
+  );
+
+  const data = new FormData();
+  data.append("image", optimizedFile);
+
+  const response = await api.post("/upload", data, {
+    timeout: 60000,
+  });
+
+  const url = response.data?.image?.url;
+
+  if (!url) {
+    throw new Error("Image upload succeeded without a URL.");
+  }
+
+  urls.push(url);
+}
+
       setProgress("Saving changes...");
       await api.patch(`/products/${id}`, {
         title: form.title.trim(), description: form.description.trim(), category: form.category.trim(),
